@@ -1,0 +1,27 @@
+/* General styles for the Footer component */
+.Footer_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 20px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
+
+/* Light mode styling */
+.Footer_light {
+  background-color: #f9f9f9;
+  color: #333333;
+}
+
+/* Dark mode styling */
+.Footer_dark {
+  background-color: #222222;
+  color: #dddddd;
+}
+
+/* Footer text styles */
+.Footer_text {
+  margin: 0;
+  text-align: center;
+}

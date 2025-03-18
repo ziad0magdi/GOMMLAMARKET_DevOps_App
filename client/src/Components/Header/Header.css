@@ -1,0 +1,122 @@
+/* Header Container */
+.Header_container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: #f0f0f0; /* Light background for light mode */
+  border-bottom: 3px solid green; /* Green accent */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.Header_GommlaIcon {
+  width: 120px;
+}
+.Header_dark {
+  background-color: #2e2e2e; /* Dark background for dark mode */
+  border-bottom: 3px solid #c76824; /* Slightly lighter green in dark mode */
+}
+
+.Header_light {
+  background-color: #ffffff;
+}
+
+/* Left Section */
+.Header_left {
+  display: flex;
+  align-items: center;
+}
+
+.Header_icon {
+  font-size: 32px;
+  color: #4caf50; /* Green icon color */
+}
+
+/* Right Section */
+.Header_right {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Spacing between elements */
+}
+
+/* Theme Toggle Button */
+.Header_toggleTheme,
+.Header_toggleLanguage {
+  text-decoration: none;
+  border: none;
+  color: white;
+  font-size: 14px;
+  background-color: #c76824;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.Header_toggleTheme:hover,
+.Header_toggleLanguage:hover {
+  background-color: #66bb6a;
+}
+
+.Header_dark .Header_toggleTheme:hover,
+.Header_dark .Header_toggleLanguage:hover {
+  background-color: #66bb6a;
+  color: white; /* White text on hover */
+}
+
+/* Sign-In Button */
+.signIn_btn {
+  text-decoration: none;
+  color: white;
+  font-size: 14px;
+  background-color: #c76824;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.signIn_btn:hover {
+  background-color: #66bb6a; /* Darker green on hover */
+}
+
+/* Adjustments for Dark Mode */
+.Header_dark .Header_toggleTheme,
+.Header_dark .Header_toggleLanguage {
+  background-color: #66bb6a;
+}
+
+.Header_dark .Header_toggleTheme:hover,
+.Header_dark .Header_toggleLanguage:hover {
+  background-color: #c76824;
+}
+
+.Header_dark .signIn_btn {
+  background-color: #66bb6a;
+}
+
+.Header_dark .signIn_btn:hover {
+  background-color: #c76824; /* Consistent hover behavior */
+}
+
+.sign {
+  display: flex;
+  display: flex;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  gap: 15px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .Header_container {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px;
+  }
+
+  .Header_right {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+  }
+}

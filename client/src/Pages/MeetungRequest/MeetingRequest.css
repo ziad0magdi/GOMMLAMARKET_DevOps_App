@@ -1,0 +1,72 @@
+/* Base Styles */
+.MeetingRequest {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+.MeetingRequest_dark {
+  background-color: #2e2e2e;
+  color: #fff;
+}
+
+.MeetingRequest_light {
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+.MeetingRequest_title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.MeetingRequest_form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.MeetingRequest_field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.MeetingRequest_field label {
+  font-weight: bold;
+}
+
+.MeetingRequest_field input,
+.MeetingRequest_field textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.MeetingRequest_field input:focus,
+.MeetingRequest_field textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.MeetingRequest_field input[type="file"] {
+  padding: 0;
+}
+
+.MeetingRequest_submit {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.MeetingRequest_submit:hover {
+  background-color: #0056b3;
+}

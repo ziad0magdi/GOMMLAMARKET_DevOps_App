@@ -1,0 +1,71 @@
+/* General styles for the NavBar component */
+.NavBar_container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 20px;
+  font-family: Arial, sans-serif;
+}
+
+/* Light mode styling */
+.NavBar_light {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+/* Dark mode styling */
+.NavBar_dark {
+  background-color: #333333;
+  color: #ffffff;
+}
+
+/* Menu styling */
+.NavBar_menu {
+  display: flex;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  gap: 15px;
+}
+
+.NavBar_item {
+  cursor: pointer;
+  transition: color 0.3s ease;
+  border: 1.5px solid black;
+  border-radius: 15px;
+  border: none;
+  padding: 10px;
+  background-color: #c76824;
+  color: white;
+  font-size: larger;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.NavBar_link_item {
+  text-decoration: none;
+}
+
+.NavBar_light .NavBar_item:hover {
+  background-color: #66bb6a;
+}
+
+.NavBar_dark .NavBar_item {
+  background-color: #66bb6a;
+  color: white;
+}
+.NavBar_dark .NavBar_item:hover {
+  background-color: #c76824;
+}
+
+/* Controls section styling */
+.NavBar_controls {
+  display: flex;
+  gap: 10px;
+}
+
+.NavBar_dark .NavBar_toggleTheme:hover,
+.NavBar_dark .NavBar_toggleLanguage:hover {
+  background-color: #444444;
+}

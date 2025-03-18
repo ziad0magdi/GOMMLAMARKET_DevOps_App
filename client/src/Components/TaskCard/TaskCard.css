@@ -1,0 +1,165 @@
+/* Default TaskCard styling */
+.TaskCard {
+  background-color: #fff;
+  padding: 20px;
+  margin: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 250px; /* Fixed width for consistent layout */
+  text-align: center;
+  transition: all 0.3s ease;
+  flex: 0 0 calc(20% - 20px); /* 20% width with spacing adjustment for 5 cards per row */
+  max-width: 250px; /* Prevent overly wide cards */
+  display: inline-block;
+  cursor: pointer;
+}
+
+/* Dark Mode */
+.TaskCard_dark {
+  background-color: #2e2e2e;
+  color: #fff;
+  border: 1px solid #444;
+}
+
+.TaskCard_dark .TaskCard_title {
+  color: #fff;
+}
+
+.TaskCard_dark .TaskCard_button {
+  background-color: #555;
+  color: #fff;
+  border: none;
+}
+
+.TaskCard_dark .TaskCard_button:hover {
+  background-color: #777;
+}
+
+/* Light Mode */
+.TaskCard_light {
+  background-color: #fafafa;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.TaskCard_light .TaskCard_title {
+  color: #333;
+}
+
+.TaskCard_light .TaskCard_button {
+  background-color: #c76824;
+  color: white;
+  border: none;
+}
+
+.TaskCard_light .TaskCard_button:hover {
+  background-color: #c76824;
+}
+
+/* Image Styling */
+.TaskCard_image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.TaskCard_imageContainer {
+  position: relative;
+}
+
+/* Heart Icon Styling */
+.TaskCard_heartIcon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  color: gray;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.TaskCard_heartIcon.favorite {
+  color: red; /* Red color for the favorited state */
+}
+
+/* Bookmark Icon Styling */
+.TaskCard_bookmarkIcon {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 24px;
+  color: gray;
+  cursor: pointer;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.TaskCard_bookmarkIcon.bookmarked {
+  color: green;
+  transform: scale(1, 2);
+}
+
+/* Title */
+
+/* Rating */
+.TaskCard_rating,
+.TaskCard_auther {
+  font-size: 14px;
+  margin: 0;
+  margin-bottom: 5px;
+  color: #777;
+  margin-right: 48px;
+  display: inline-block;
+  position: relative;
+}
+.TaskCard_publishDate,
+.TaskCard_Details {
+  font-size: 14px;
+  margin: 0;
+  margin-bottom: 5px;
+  color: #777;
+  margin-right: 10px;
+  display: inline-block;
+  position: relative;
+}
+
+/* Button Styling */
+.TaskCard_button {
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 15px;
+}
+
+.Active_TaskCard_dark {
+  background-color: #c76824;
+  color: white;
+}
+
+.Active_TaskCard_light {
+  background-color: #66bb6a;
+  color: white;
+}
+
+.Active_TaskCard_dark .TaskCard_Details {
+  color: white;
+}
+
+.Active_TaskCard_light .TaskCard_Details {
+  color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .TaskCard {
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  .TaskCard_image {
+    height: 150px;
+  }
+}

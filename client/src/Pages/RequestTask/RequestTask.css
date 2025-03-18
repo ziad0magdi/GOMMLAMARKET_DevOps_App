@@ -1,0 +1,91 @@
+/* Common Styles */
+.RequestTask_dark .RequestTask_container {
+  height: 100vh;
+  background-color: #161616;
+}
+.RequestTask_light .RequestTask_container {
+  height: 100vh;
+  background-color: #f8f8f8;
+}
+.RequestTask_form {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.RequestTask_title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.RequestTask_field {
+  margin-bottom: 15px;
+}
+
+.RequestTask_label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.RequestTask_input,
+.RequestTask_textarea,
+.RequestTask_fileInput {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.RequestTask_textarea {
+  resize: vertical;
+}
+
+.RequestTask_button {
+  display: block;
+  width: 100%;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+/* Light Mode */
+.RequestTask_light {
+  position: relative;
+  top: 25%;
+  background-color: #fafafa;
+  color: black;
+}
+
+.RequestTask_light .RequestTask_button {
+  background-color: #66bb6a;
+  color: #fff;
+}
+
+.RequestTask_light .RequestTask_button:hover {
+  background-color: #c76824;
+}
+
+/* Dark Mode */
+.RequestTask_dark {
+  position: relative;
+  top: 25%;
+  background-color: #2e2e2e;
+  border: #444;
+  color: #fff;
+}
+
+.RequestTask_dark .RequestTask_button {
+  background-color: #f16500;
+  color: #000;
+}
+
+.RequestTask_dark .RequestTask_button:hover {
+  background-color: #66bb6a;
+}

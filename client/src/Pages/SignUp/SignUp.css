@@ -1,0 +1,83 @@
+/* Default SignUp Styling */
+.signUp {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  box-sizing: border-box;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Light Mode */
+.signUp_light {
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+/* Dark Mode */
+.signUp_dark {
+  background-color: #2e2e2e;
+  color: #fff;
+}
+
+/* Form Container */
+.signUp_formContainer {
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Dark Mode for Form Container */
+.signUp_dark .signUp_formContainer {
+  background-color: #333;
+  color: #fff;
+}
+
+/* Inputs */
+.signUp_form input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+/* Dark Mode Input */
+.signUp_dark .signUp_form input {
+  background-color: #444;
+  color: #fff;
+  border: 1px solid #555;
+}
+
+/* Button */
+.signUp_form button {
+  background-color: #4caf50; /* Green major color */
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.signUp_form button:hover {
+  background-color: #45a049; /* Slightly darker green */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .signUp_formContainer {
+    padding: 20px;
+  }
+
+  .signUp_form input {
+    font-size: 14px;
+  }
+}

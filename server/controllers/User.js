@@ -32,15 +32,6 @@ class UsersController {
       user_branch_id,
       user_department_id,
     } = req.body;
-    console.log("Body", req.body);
-    console.log("user_fname", user_fname);
-    console.log("user_lname", user_lname);
-    console.log("user_phone", user_phone);
-    console.log("user_email", user_email);
-    console.log("user_password", user_password);
-    console.log("user_branch_id", user_branch_id);
-    console.log("user_department_id", user_department_id);
-
     try {
       if (
         !user_fname ||

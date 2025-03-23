@@ -6,6 +6,11 @@ const getAllApplicationsinformations = (id, user_Id) =>
 const getAllUserApplications = (user_Id) =>
   axios.post(`/MyApplication`, { user_Id: user_Id });
 
+const getApplicationWorkOn = (application_id) =>
+  axios.post("/ApplicationWorkOn", {
+    application_id: application_id,
+  });
+
 const AssginApplication = (user_Id, application_Id) =>
   axios.post("/AssginApplication", {
     user_Id: user_Id,
@@ -73,6 +78,7 @@ const ApplicationAPI = {
   AddApplications,
   ChanageApplicationState,
   ChanageApplicationDuration,
+  getApplicationWorkOn,
 };
 
 export default ApplicationAPI;

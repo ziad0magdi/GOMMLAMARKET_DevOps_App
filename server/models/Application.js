@@ -22,35 +22,40 @@ class ApplicationModel {
     A.application_request_user_id,
     A.application_approved_user_id,
     A.application_status_id,
+	ATMS.apps_tasks_meetings_status_name,
     FORMAT(UA.application_start_date, 'yyyy-MM-dd') AS 'application_start_date',
-    UA.application_duration 
+    UA.application_duration,
+	FORMAT(UA.application_end_date, 'yyyy-MM-dd') AS 'application_end_date'
 FROM applications AS A 
 LEFT JOIN users_applications AS UA ON A.application_id = UA.application_id 
-WHERE
-    (A.application_request_user_id = @user_Id OR A.application_approved_user_id = @user_Id OR UA.user_id = @user_Id) 
-    OR
+INNER JOIN apps_tasks_meetings_status AS ATMS ON ATMS.apps_tasks_meetings_status_id = A.application_status_id
+WHERE 
+    -- User requested or approved the application
+    (A.application_request_user_id = @user_id OR A.application_approved_user_id = @user_id OR UA.user_id = @user_id) 
+    OR 
+    -- User is in the same department as the requester or approver with group_id 1 or 2
     (
-        (SELECT user_department_id FROM users WHERE user_id = @user_Id) IN (
+        (SELECT user_department_id FROM users WHERE user_id = @user_id) IN (
             SELECT user_department_id FROM users WHERE user_id = A.application_request_user_id
         ) 
         AND 
-        (SELECT user_group_id FROM users WHERE user_id = @user_Id) IN (1, 2)
+        (SELECT user_group_id FROM users WHERE user_id = @user_id) IN (1, 2)
     )
     OR 
     (
-        (SELECT user_department_id FROM users WHERE user_id = @user_Id) IN (
+        (SELECT user_department_id FROM users WHERE user_id = @user_id) IN (
             SELECT user_department_id FROM users WHERE user_id = A.application_approved_user_id
         ) 
         AND 
-        (SELECT user_group_id FROM users WHERE user_id = @user_Id) IN (1, 2)
+        (SELECT user_group_id FROM users WHERE user_id = @user_id) IN (1, 2)
     ) 
 	OR
 	(
-        (SELECT user_department_id FROM users WHERE user_id = @user_Id) IN (
+        (SELECT user_department_id FROM users WHERE user_id = @user_id) IN (
             SELECT user_department_id FROM users WHERE user_department_id = A.department_id
         ) 
         AND 
-        (SELECT user_group_id FROM users WHERE user_id = @user_Id) IN (1, 2)
+        (SELECT user_group_id FROM users WHERE user_id = @user_id) IN (1, 2)
     );
  `;
 
@@ -416,22 +421,86 @@ WHERE application_id = @application_id`;
       throw err;
     }
   }
-  /*----------------------------Assgin Employee to Application---------------------*/
-  static async AssginApplication(user_id, application_id) {
-    console.log("user_id in the modle >>> ", typeof user_id, user_id);
-    console.log(
-      "application_id in the modle >>> ",
-      typeof application_id,
-      application_id
-    );
+
+  /*---------------------------Get Application Start date, Duration, End date to assigin employee to task in task model---------------------*/
+  static async getApplicationStardDate(application_id) {
     try {
-      const query = `INSERT INTO users_applications (user_id, application_id) VALUES (@user_id, @application_id)`;
+      const query = `SELECT TOP 1 
+FORMAT(application_start_date, 'yyyy-MM-dd') AS 'application_start_date',
+application_duration,
+FORMAT(application_end_date, 'yyyy-MM-dd') AS 'application_end_date' 
+FROM users_applications 
+WHERE application_id = @application_id AND application_start_date IS NOT NULL `;
       const params = {
-        user_id: user_id,
+        application_id: application_id,
+      };
+      const result = await db.executeQuery(query, params);
+      console.log(result.recordset);
+      return result.recordset;
+    } catch (err) {
+      console.error(
+        "Error Getting Application Start date, Duration, And End date:",
+        err
+      );
+      throw err;
+    }
+  }
+
+  /*---------------------------Get Users Work On Application---------------------*/
+  static async getApplicationWorkOn(application_id) {
+    try {
+      const query = `SELECT 
+UA.user_id AS 'Employee_Id',
+U.user_fname + ' ' + U.user_lname AS 'Employee_Name'
+FROM users_applications AS UA
+INNER JOIN users AS U
+ON U.user_id = UA.user_id
+WHERE UA.application_id = @application_id`;
+      const params = {
         application_id: application_id,
       };
       const result = await db.executeQuery(query, params);
       return result.recordset;
+    } catch (err) {
+      console.error("Error Getting Users Who Work On Application:", err);
+      throw err;
+    }
+  }
+
+  /*----------------------------Assgin Employee to Application---------------------*/
+  static async AssginApplication(
+    user_id,
+    application_id,
+    application_start_date,
+    application_duration,
+    application_end_date
+  ) {
+    try {
+      if (
+        application_start_date &&
+        application_duration &&
+        application_end_date
+      ) {
+        const query = `INSERT INTO users_applications (user_id, application_id, application_start_date, application_duration, application_end_date) 
+        VALUES (@user_id, @application_id, @application_start_date, @application_duration, @application_end_date)`;
+        const params = {
+          user_id: user_id,
+          application_id: application_id,
+          application_start_date: application_start_date,
+          application_duration: application_duration,
+          application_end_date: application_end_date,
+        };
+        const result = await db.executeQuery(query, params);
+        return result.recordset;
+      } else {
+        const query = `INSERT INTO users_applications (user_id, application_id) VALUES (@user_id, @application_id)`;
+        const params = {
+          user_id: user_id,
+          application_id: application_id,
+        };
+        const result = await db.executeQuery(query, params);
+        return result.recordset;
+      }
     } catch (err) {
       console.error("Error Assgining Application:", err);
       throw err;

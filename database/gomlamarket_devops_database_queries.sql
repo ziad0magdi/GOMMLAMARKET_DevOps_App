@@ -2,8 +2,15 @@
 SELECT * FROM users
 SELECT * FROM applications
 SELECT * FROM users_applications
+SELECT * FROM tasks
 SELECT * FROM users_groups
 SELECT * FROM applications_files
+delete from users_applications where application_id = 34
+SELECT * FROM tasks WHERE application_id = 35
+SELECT * FROM meetings
+SELECT * FROM users_meeting_attend
+DELETE FROM tasks
+
 --------------------------------Get All task Informations-------------------------------------------------------------- 
 SELECT 
 T.task_id,
@@ -109,7 +116,7 @@ UA.application_duration
 FROM applications as A 
 LEFT JOIN users_applications as UA 
 on A.application_id = UA.application_id 
-WHERE UA.user_id = 4 OR
+WHERE UA.user_id = 1 OR
 A.application_request_user_id = 1 OR
 A.application_approved_user_id = 1
 OR (A.application_request_user_id IN 
@@ -130,38 +137,61 @@ SELECT
     A.application_request_user_id,
     A.application_approved_user_id,
     A.application_status_id,
+	ATMS.apps_tasks_meetings_status_name,
     FORMAT(UA.application_start_date, 'yyyy-MM-dd') AS 'application_start_date',
-    UA.application_duration 
+    UA.application_duration,
+	FORMAT(UA.application_end_date, 'yyyy-MM-dd') AS 'application_start_date'
 FROM applications AS A 
 LEFT JOIN users_applications AS UA ON A.application_id = UA.application_id 
+INNER JOIN apps_tasks_meetings_status AS ATMS ON ATMS.apps_tasks_meetings_status_id = A.application_status_id
 WHERE 
     -- User requested or approved the application
-    (A.application_request_user_id = 2 OR A.application_approved_user_id = 2 OR UA.user_id = 2) 
+    (A.application_request_user_id = 1 OR A.application_approved_user_id = 1 OR UA.user_id = 1) 
     OR 
     -- User is in the same department as the requester or approver with group_id 1 or 2
     (
-        (SELECT user_department_id FROM users WHERE user_id = 2) IN (
+        (SELECT user_department_id FROM users WHERE user_id = 1) IN (
             SELECT user_department_id FROM users WHERE user_id = A.application_request_user_id
         ) 
         AND 
-        (SELECT user_group_id FROM users WHERE user_id = 2) IN (1, 2)
+        (SELECT user_group_id FROM users WHERE user_id = 1) IN (1, 2)
     )
     OR 
     (
-        (SELECT user_department_id FROM users WHERE user_id = 2) IN (
+        (SELECT user_department_id FROM users WHERE user_id = 1) IN (
             SELECT user_department_id FROM users WHERE user_id = A.application_approved_user_id
         ) 
         AND 
-        (SELECT user_group_id FROM users WHERE user_id = 2) IN (1, 2)
+        (SELECT user_group_id FROM users WHERE user_id = 1) IN (1, 2)
     ) 
 	OR
 	(
-        (SELECT user_department_id FROM users WHERE user_id = 2) IN (
+        (SELECT user_department_id FROM users WHERE user_id = 1) IN (
             SELECT user_department_id FROM users WHERE user_department_id = A.department_id
         ) 
         AND 
-        (SELECT user_group_id FROM users WHERE user_id = 2) IN (1, 2)
+        (SELECT user_group_id FROM users WHERE user_id = 1) IN (1, 2)
     );
+
+----------------------------Assign Task to Employee---------------------------------------------
+UPDATE tasks SET user_id = @user_Id , task_status_id = @task_status_id WHERE task_id = @task_id
+SELECT TOP 1 
+FORMAT(application_start_date, 'yyyy-MM-dd') AS 'application_start_date',
+application_duration,
+FORMAT(application_end_date, 'yyyy-MM-dd') AS 'application_end_date' 
+FROM users_applications 
+WHERE application_id = @application_id AND application_start_date IS NOT NULL 
+
+INSERT INTO users_applications (user_id, application_id) VALUES (@user_id, @application_id)
+
+----------------------------Get All Employee Who Work On a Task---------------------------------
+SELECT 
+UA.user_id AS 'Employee_Id',
+U.user_fname + ' ' + U.user_lname AS 'Employee_Name'
+FROM users_applications AS UA
+INNER JOIN users AS U
+ON U.user_id = UA.user_id
+WHERE UA.application_id = 43
 
 ----------------------------Get All tasks for an Application------------------------------------
 SELECT COUNT(task_id) AS 'The number of Tasks' 

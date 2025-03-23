@@ -18,6 +18,11 @@ router.post(
   "/Application/:id",
   asyncHandler(ApplicationController.getAllApplicationsinformations)
 );
+
+router.post(
+  "/ApplicationWorkOn",
+  asyncHandler(ApplicationController.getApplicationWorkOn)
+);
 router.post(
   "/Application",
   upload.single("pdfFile"),

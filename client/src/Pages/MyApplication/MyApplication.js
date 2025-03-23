@@ -21,8 +21,9 @@ const MyApplication = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        if (!user_Id) return;
         const response = await ApplicationAPI.getAllUserApplications(user_Id);
-        // setAllApplications(response.data.applications);
+        setAllApplications(response.data.applications);
         setRequestedApps(
           response.data.applications.filter(
             (app) => app.application_status_id === 1
@@ -63,6 +64,8 @@ const MyApplication = () => {
     setSelectedOption(option);
   };
   console.log(user_Id, "from My App ");
+  console.log(allApplications);
+
   const renderBooks = (apps, sectionTitleEn, sectionTitleAr) => {
     return (
       <div className="MyBooks_section">

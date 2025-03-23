@@ -6,8 +6,12 @@ const AddTask = (formData) =>
       "Content-Type": "multipart/form-data",
     },
   });
-const AssginTask = (user_Id, task_Id) =>
-  axios.post("/AssginTask", { user_Id: user_Id, task_Id: task_Id });
+const AssginTask = (user_Id, task_Id, application_id) =>
+  axios.post("/AssginTask", {
+    user_Id: user_Id,
+    task_Id: task_Id,
+    application_id: application_id,
+  });
 
 const AssignDuration = (duration, duration_unit, task_id) =>
   axios.post("/AssignTaskDuration", {

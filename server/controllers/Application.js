@@ -124,6 +124,19 @@ class ApplicationController {
     }
   }
 
+  static async getApplicationWorkOn(req, res) {
+    const application_id = Number(req.body.application_id);
+    try {
+      const ApplicationWorkUser = await ApplicationModel.getApplicationWorkOn(
+        application_id
+      );
+      res.json(ApplicationWorkUser);
+    } catch (error) {
+      console.error("Error fetching Application User Who Work On:", error);
+      res.status(500).json({ message: "Server Error", error });
+    }
+  }
+
   static async AddApplications(req, res) {
     try {
       // Ensure request body exists
@@ -176,16 +189,7 @@ class ApplicationController {
 
   static async AssginApplication(req, res) {
     const user_Id = Number(req.body.user_Id);
-
     const application_Id = Number(req.body.application_Id);
-
-    console.log("user_id in the controller >>> ", typeof user_Id, user_Id);
-    console.log(
-      "application_id in the controller >>> ",
-      typeof application_Id,
-      application_Id
-    );
-
     try {
       const result = await ApplicationModel.AssginApplication(
         user_Id,

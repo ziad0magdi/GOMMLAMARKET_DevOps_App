@@ -1,5 +1,7 @@
 const TaskModel = require("../models/Tasks");
 
+const ApplicationModel = require("../models/Application");
+
 class TaskController {
   static async AddTask(req, res) {
     try {
@@ -100,11 +102,29 @@ class TaskController {
     try {
       const user_Id = Number(req.body.user_Id);
       const task_Id = Number(req.body.task_Id);
+      const application_id = Number(req.body.application_id);
       if (!user_Id || !task_Id) {
         console.error("Error Assgining Task");
         return res.status(403).json({ error: "Some data is missing" });
       }
-      resuelt = await TaskModel.AssginTask(user_Id, task_Id);
+      const resuelt = await TaskModel.AssginTask(user_Id, task_Id);
+      const resuelt2 = await ApplicationModel.getApplicationStardDate(
+        application_id
+      );
+      const application_start_date = resuelt2[0].application_start_date;
+      const application_duration = resuelt2[0].application_duration;
+      const application_end_date = resuelt2[0].application_end_date;
+      console.log("resuelt2>>>>>>>>>>>>", resuelt2);
+      console.log(">>>>>>>>>>>>", application_start_date);
+      console.log(">>>>>>>>>>>>", application_duration);
+      console.log(">>>>>>>>>>>>", application_end_date);
+      const resuelt3 = await ApplicationModel.AssginApplication(
+        user_Id,
+        application_id,
+        application_start_date,
+        application_duration,
+        application_end_date
+      );
       return res.json({ success: true });
     } catch (error) {
       console.error("Error Assgining Task");

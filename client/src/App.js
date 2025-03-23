@@ -19,6 +19,18 @@ import RequestApplication from "./Pages/RequestApplication/RequestAppliction.js"
 import MeetingRequest from "./Pages/MeetungRequest/MeetingRequest.js";
 import RequestTask from "./Pages/RequestTask/RequestTask.js";
 
+// document.addEventListener("contextmenu", (event) => event.preventDefault());
+
+// document.addEventListener("keydown", (event) => {
+//   if (
+//     event.key === "F12" ||
+//     (event.ctrlKey && event.shiftKey && event.key === "I") ||
+//     (event.ctrlKey && event.key === "U")
+//   ) {
+//     event.preventDefault();
+//   }
+// });
+
 function App() {
   return (
     <UserProvider>

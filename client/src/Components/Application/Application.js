@@ -15,7 +15,7 @@ const Application = () => {
     useUser();
   const [applicationData, setApplicationData] = useState(null);
   const [tasks, setTasks] = useState(null);
-  const [task, setTask] = useState([]);
+
   const [selectedState, setSelectedState] = useState();
   const [selectedEmployee, setSelectedEmployee] = useState();
   const [selectedEmployeeforTask, setSelectedEmployeeforTask] = useState();
@@ -26,17 +26,18 @@ const Application = () => {
     useState();
   const [activeCards, setActiveCards] = useState([]);
   const [employees, setEmployees] = useState([]);
+  const [workEmployees, setWorkEmployees] = useState([]);
   const navigate = useNavigate();
   const { application_id } = useParams();
 
   useEffect(() => {
-    if (!user_Id) return;
+    if (!user_Id || !application_id) return;
 
     const fetchData = async () => {
       try {
         const response = await ApplicationAPI.getAllApplicationsinformations(
           application_id,
-          Number(user_Id) // convert if needed
+          Number(user_Id)
         );
         setApplicationData(response.data);
         setTasks(response.data.tasks);
@@ -49,10 +50,15 @@ const Application = () => {
   }, [user_Id, application_id]);
 
   useEffect(() => {
+    if (!user_Id) return;
     const fetchData = async () => {
       try {
-        const response = await UserAPI.GetAllEmployeeWithSpacificUser(user_Id);
-        setEmployees(response.data.User);
+        const response1 = await UserAPI.GetAllEmployeeWithSpacificUser(user_Id);
+        setEmployees(response1.data.User);
+        const response2 = await ApplicationAPI.getApplicationWorkOn(
+          application_id
+        );
+        setWorkEmployees(response2.data);
       } catch (error) {
         console.log("Error fetching data:", error);
       }
@@ -93,9 +99,17 @@ const Application = () => {
     );
     window.location.reload();
   };
-  const handleAssignUsertoTask = (user_Id, task_Id) => {
-    TaskAPI.AssginTask(user_Id, task_Id);
-    window.location.reload();
+  const handleAssignUsertoTask = (user_id, task_id, application_id) => {
+    console.log(
+      typeof user_id,
+      user_id,
+      typeof task_id,
+      task_id,
+      typeof application_id,
+      application_id
+    );
+    TaskAPI.AssginTask(user_id, task_id, application_id);
+    // window.location.reload();
   };
   const handleDuration = (duration, duration_unit, application_Id, user_Id) => {
     if (!duration || !duration_unit || !application_Id || !user_Id) {
@@ -169,6 +183,8 @@ const Application = () => {
     window.location.reload();
   };
 
+  console.log("The Employees who work on application >>> ", workEmployees);
+
   console.log("User ID >>> ", user_Id);
   console.log("User Group >>> ", userGroup);
   console.log("User Department >>> ", userDepartment, typeof userDepartment);
@@ -176,6 +192,11 @@ const Application = () => {
     "Application Department >>> ",
     applicationData.applicationInfo[0].Application_department_id,
     typeof applicationData.applicationInfo[0].Application_department_id
+  );
+
+  console.log(
+    "the user who work on this application >>> ",
+    applicationData.applicationInfo[0].The_User_Who_work_on_The_Application_id
   );
 
   return (
@@ -719,7 +740,8 @@ const Application = () => {
         </button>
       </div>
       {userDepartment ===
-        applicationData.applicationInfo[0].Application_department_id && (
+        (applicationData.applicationInfo[0].Application_department_id ||
+          Number(userGroup) === 1) && (
         <div>
           <h2>{language === "en" ? "Tasks" : "المهام"}</h2>
           <div className="Application_taskGrid">
@@ -741,7 +763,6 @@ const Application = () => {
                       key={index}
                       task={task}
                       onClick={() => {
-                        setTask(task);
                         toggleCard(index);
                       }}
                       task_id={task.task_id}
@@ -959,14 +980,22 @@ const Application = () => {
                                         ? "Select Employee"
                                         : "اختر موظف"}
                                     </option>
-                                    {employees.map((employee) => (
-                                      <option
-                                        key={employee.user_id}
-                                        value={employee.user_id}
-                                      >
-                                        {employee.Employee_Full_Name}
-                                      </option>
-                                    ))}
+                                    {employees
+                                      .filter(
+                                        (employee) =>
+                                          employee.user_id !==
+                                          applicationData.applicationInfo[0]
+                                            .The_User_Who_work_on_The_Application_id
+                                      )
+
+                                      .map((employee) => (
+                                        <option
+                                          key={employee.user_id}
+                                          value={employee.user_id}
+                                        >
+                                          {employee.Employee_Full_Name}
+                                        </option>
+                                      ))}
                                   </select>
 
                                   <button
@@ -975,7 +1004,8 @@ const Application = () => {
                                         selectedEmployeeforTask,
                                         applicationData.tasksDetails.find(
                                           (_, index) => activeCards[index]
-                                        ).task_id
+                                        ).task_id,
+                                        application_id
                                       )
                                     } // ✅ Use arrow function
                                     disabled={!selectedEmployeeforTask}

@@ -83,7 +83,7 @@ CREATE TABLE tasks (
     user_id INT,
     task_request_user_id INT NOT NULL,
 	task_approv_user_id INT,
-    application_id INT NOT NULL REFERENCES applications(application_id),
+    application_id INT NOT NULL REFERENCES applications(application_id) ON DELETE CASCADE ON UPDATE CASCADE,
     task_start_date DATE, 
     task_duration NVARCHAR(255),
     task_end_date DATE,
@@ -323,9 +323,16 @@ SELECT * FROM sys.triggers
 --------------------------------------------------Drop Constraint---------------------------------------------------------------------------------
 SELECT TABLE_NAME, CONSTRAINT_NAME, COLUMN_NAME
 FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-WHERE TABLE_NAME = 'meetings' 
+WHERE TABLE_NAME = 'tasks' 
 
-ALTER TABLE tasks DROP CONSTRAINT FK__tasks__user_id__412EB0B6;
+ALTER TABLE tasks DROP CONSTRAINT FK__tasks__applicati__440B1D61;
+
+ALTER TABLE tasks
+ADD CONSTRAINT FK__tasks__applicati__440B1D61
+FOREIGN KEY (application_id)
+REFERENCES applications (application_id)
+ON DELETE CASCADE ON UPDATE CASCADE ;
+
 
 ---------------------------------------------------DROP The Database---------------------------------------------------------------------------
 

@@ -115,39 +115,41 @@ const SignUp = () => {
             onChange={handleInputChange}
             required
           />
-          <select
-            value={selectedBranch}
-            onChange={(e) => {
-              setSelectedBranch(e.target.value);
-            }}
-          >
-            <option value="">
-              {language === "en" ? "Select Branch" : "اختر الفرع"}
-            </option>
-            {branchs.map((branch) => (
-              <option key={branch.branch_id} value={branch.branch_id}>
-                {branch.branch_name}
+          <div className="SignUp_select">
+            <select
+              value={selectedBranch}
+              onChange={(e) => {
+                setSelectedBranch(e.target.value);
+              }}
+            >
+              <option value="">
+                {language === "en" ? "Select Branch" : "اختر الفرع"}
               </option>
-            ))}
-          </select>
-          <select
-            value={selectedDepartment}
-            onChange={(e) => {
-              setSelectedDepartment(e.target.value);
-            }}
-          >
-            <option value="">
-              {language === "en" ? "Select Department" : "اختر القسم"}
-            </option>
-            {departments.map((department) => (
-              <option
-                key={department.department_id}
-                value={department.department_id}
-              >
-                {department.department_name}
+              {branchs.map((branch) => (
+                <option key={branch.branch_id} value={branch.branch_id}>
+                  {branch.branch_name}
+                </option>
+              ))}
+            </select>
+            <select
+              value={selectedDepartment}
+              onChange={(e) => {
+                setSelectedDepartment(e.target.value);
+              }}
+            >
+              <option value="">
+                {language === "en" ? "Select Department" : "اختر القسم"}
               </option>
-            ))}
-          </select>
+              {departments.map((department) => (
+                <option
+                  key={department.department_id}
+                  value={department.department_id}
+                >
+                  {department.department_name}
+                </option>
+              ))}
+            </select>
+          </div>
           <button
             type="submit"
             onClick={handleSubmit}

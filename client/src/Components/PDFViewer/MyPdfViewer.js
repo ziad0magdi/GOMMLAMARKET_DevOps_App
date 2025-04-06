@@ -1,22 +1,37 @@
-// import React from "react";
-// import { Document, Page, pdfjs } from "react-pdf";
+import React, { useEffect, useState } from "react";
+import Modal from "react-modal";
 
-// // Correct way to set worker
-// pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-//   "pdfjs-dist/build/pdf.worker.min.js",
-//   import.meta.url
-// ).toString();
+Modal.setAppElement("#root");
 
-// const MyPdfViewer = ({ pdfPath }) => {
-//   console.log(`http://localhost:8080${pdfPath}`);
+const PDFViewer = ({ pdfPath, isOpen, onClose }) => {
+  if (!pdfPath) return null;
 
-//   return (
-//     <div>
-//       <Document file={`http://localhost:8080${pdfPath}`}>
-//         <Page pageNumber={1} />
-//       </Document>
-//     </div>
-//   );
-// };
+  const pdfUrl = `http://localhost:8080${pdfPath}`;
 
-// export default MyPdfViewer;
+  return (
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      contentLabel="PDF Viewer"
+      style={{
+        content: {
+          width: "80%",
+          height: "80%",
+          margin: "auto",
+          borderRadius: "10px",
+          padding: "20px",
+        },
+      }}
+    >
+      <button
+        onClick={onClose}
+        style={{ float: "right", fontSize: "16px", cursor: "pointer" }}
+      >
+        ❌
+      </button>
+      <iframe src={pdfUrl} width="100%" height="100%" title="PDF Viewer" />
+    </Modal>
+  );
+};
+
+export default PDFViewer;

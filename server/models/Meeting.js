@@ -43,6 +43,21 @@ class MeetingsModel {
   }
 
   /*------------------------Add Online Meeting----------------------------------------*/
+  static async addOfflineMeeting(meeting_id, meeting_location_id) {
+    try {
+      const query = `INSERT INTO users_offline_meeting (meeting_id, meeting_location_id) VALUES (@meeting_id, @meeting_location_id)`;
+      const params = {
+        meeting_id: meeting_id,
+        meeting_location_id: meeting_location_id,
+      };
+      const result = await db.executeQuery(query, params);
+      return result.recordset;
+    } catch (err) {
+      console.error("Error Adding Meeting Link:", err);
+      throw err;
+    }
+  }
+  /*------------------------Add Online Meeting----------------------------------------*/
   static async addOnlineMeeting(meeting_id, meetingLink) {
     try {
       const query = `INSERT INTO users_online_meeting (meeting_id, meeting_link) VALUES (@meeting_id, @meetingLink)`;
@@ -90,19 +105,16 @@ class MeetingsModel {
     }
   }
   /*------------------------GET Meeting----------------------------------------*/
-  // static async getMeeting(meeting_id) {
-  //   try {
-  //     const query = `SELECT * FROM meetings WHERE meeting_id = @meeting_id`;
-  //     const params = {
-  //       meeting_id: meeting_id,
-  //     };
-  //     const result = await db.executeQuery(query, params);
-  //     return result.recordset;
-  //   } catch (err) {
-  //     console.error("Error Getting Meeting:", err);
-  //     throw err;
-  //   }
-  // }
+  static async getMeetingLocation() {
+    try {
+      const query = `SELECT * FROM meeting_location`;
+      const result = await db.executeQuery(query);
+      return result.recordset;
+    } catch (err) {
+      console.error("Error Getting Meeting:", err);
+      throw err;
+    }
+  }
 }
 
 module.exports = MeetingsModel;

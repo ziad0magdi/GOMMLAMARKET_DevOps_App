@@ -207,11 +207,14 @@ UMA.user_id,
 FORMAT(M.meeting_start_date , 'yyyy-MM-dd') AS 'Meeting_Start_Date',
 ATMS.apps_tasks_meetings_status_name AS 'Meeting_Status',
 M.meeting_important_points,
+UFM.meeting_location_id,
 UR.user_fname + ' ' + UR.user_lname AS 'User_Who_Request_Meeting',
 UMA.is_approve
 FROM meetings AS M 
 LEFT JOIN users_online_meeting AS UOM
 ON UOM.meeting_id = M.meeting_id
+LEFT JOIN users_offline_meeting AS UFM
+ON UFM.meeting_id = M.meeting_id
 INNER JOIN apps_tasks_meetings_status AS ATMS
 ON ATMS.apps_tasks_meetings_status_id = M.meeting_status_id
 INNER JOIN users AS UR 

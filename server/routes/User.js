@@ -10,4 +10,6 @@ router.post(
   "/Employee",
   asyncHandler(UsersController.GetAllEmployeeWithSpacificUser)
 );
+router.post("/ApproveAccounts", asyncHandler(UsersController.ApproveAccounts));
+router.post("/DeclineAccounts", asyncHandler(UsersController.DeclineAccounts));
 module.exports = router;

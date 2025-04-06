@@ -35,7 +35,8 @@ CREATE TABLE users (
     user_password NVARCHAR(255) NOT NULL,
     user_branch_id INT NOT NULL REFERENCES branches(branch_id) ON DELETE CASCADE ON UPDATE CASCADE,
     user_department_id INT NOT NULL REFERENCES departments(department_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    user_group_id INT NOT NULL REFERENCES users_groups(group_id) ON DELETE CASCADE ON UPDATE CASCADE
+    user_group_id INT NOT NULL REFERENCES users_groups(group_id) ON DELETE CASCADE ON UPDATE CASCADE,
+	isApproved NVARCHAR(1)
 );
 
 -- Create application/task state table
@@ -127,6 +128,13 @@ CREATE TABLE users_online_meeting (
     meeting_id INT NOT NULL REFERENCES meetings(meeting_id) ON DELETE CASCADE ON UPDATE CASCADE,
     meeting_link NVARCHAR(255) NOT NULL,
     PRIMARY KEY (meeting_id , meeting_link)
+);
+
+-- Create the users_offline_meeting table
+CREATE TABLE users_offline_meeting (
+    meeting_id INT NOT NULL REFERENCES meetings(meeting_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    meeting_location NVARCHAR(255) NOT NULL,
+    PRIMARY KEY (meeting_id)
 );
 GO
 

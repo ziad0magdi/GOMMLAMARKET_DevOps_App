@@ -75,12 +75,12 @@ const SignIn = () => {
   return (
     <div className={`signIn ${isDarkMode ? "signIn_dark" : "signIn_light"}`}>
       <div className="signIn_formContainer">
-        <h2>{language === "En" ? "Sign In" : "تسجيل الدخول"}</h2>
+        <h2>{language === "en" ? "Sign In" : "تسجيل الدخول"}</h2>
         <form className="signIn_form" onSubmit={handleSubmit}>
           <input
             type="text"
             id="email"
-            placeholder={language === "En" ? "Email:" : " الايميل:"}
+            placeholder={language === "en" ? "Email:" : " الايميل:"}
             name="username"
             onChange={(event) =>
               setFormData({ ...formData, user_email: event.target.value })
@@ -89,17 +89,17 @@ const SignIn = () => {
           <input
             type="password"
             id="password"
-            placeholder={language === "En" ? "Password:" : "كلمة المرور:"}
+            placeholder={language === "en" ? "Password:" : "كلمة المرور:"}
             name="password"
             onChange={(event) =>
               setFormData({ ...formData, user_password: event.target.value })
             }
           />
           <button type="submit">
-            {language === "En" ? "Sign In" : "تسجيل الدخول"}
+            {language === "en" ? "Sign In" : "تسجيل الدخول"}
           </button>
           <button onClick={handleSignUpClick}>
-            {language === "En" ? "Sign Up" : "تسجيل حساب جديد"}
+            {language === "en" ? "Sign Up" : "تسجيل حساب جديد"}
           </button>
         </form>
       </div>

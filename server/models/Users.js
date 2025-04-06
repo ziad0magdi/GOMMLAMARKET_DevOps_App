@@ -77,17 +77,24 @@ class UsersModel {
   static async GetAllEmployeeWithSpacificUser(user_id) {
     try {
       const query = `SELECT 
-user_fname + ' ' + user_lname AS 'Employee_Full_Name',
-user_id
-FROM users 
-WHERE user_department_id = (SELECT user_department_id FROM users WHERE user_id = @user_id) AND user_id <> @user_id`;
+      U.user_id,
+      U.user_fname + ' ' + user_lname AS 'Employee_Full_Name',
+      U.user_phone,
+      U.isApproved,
+	  UG.group_role
+FROM users AS U
+INNER JOIN users_groups AS UG
+ON U.user_group_id = UG.group_id
+WHERE (user_department_id = (SELECT user_department_id FROM users WHERE user_id = @user_id)
+ AND user_branch_id = (SELECT user_branch_id FROM users WHERE user_id = @user_id))
+  AND user_id <> @user_id`;
       const params = {
         user_id: user_id,
       };
       const result = await db.executeQuery(query, params);
       return result.recordset;
     } catch (error) {
-      console.error("Error fetching user:", err);
+      console.error("Error fetching users:", err);
       throw err;
     }
   }
@@ -162,8 +169,8 @@ WHERE user_department_id = (SELECT user_department_id FROM users WHERE user_id =
       const hashedPassword = await bcrypt.hash(user_password, 10);
 
       const query = `
-        INSERT INTO users (user_fname, user_lname, user_phone, user_email, user_password, user_branch_id, user_department_id, user_group_id)
-        VALUES (@user_fname, @user_lname, @user_phone, @user_email, @user_password, @user_branch_id, @user_department_id, @user_group_id)`;
+        INSERT INTO users (user_fname, user_lname, user_phone, user_email, user_password, user_branch_id, user_department_id, user_group_id, isApproved)
+        VALUES (@user_fname, @user_lname, @user_phone, @user_email, @user_password, @user_branch_id, @user_department_id, @user_group_id ,@isApproved)`;
 
       const params = {
         user_fname,
@@ -174,12 +181,45 @@ WHERE user_department_id = (SELECT user_department_id FROM users WHERE user_id =
         user_branch_id,
         user_department_id,
         user_group_id: 3,
+        isApproved: "n",
       };
 
       const result = await db.executeQuery(query, params);
       return result.rowsAffected;
     } catch (err) {
       console.error("Error adding user:", err);
+      throw err;
+    }
+  }
+
+  /*----------------------------Approve New Employees Accounts By the Manger----------------------------------*/
+  static async ApproveAccounts(user_id) {
+    try {
+      const query = `UPDATE users 
+      SET isApproved = 'y'
+      WHERE user_id = @user_id`;
+      const params = {
+        user_id: user_id,
+      };
+      const result = await db.executeQuery(query, params);
+      return result.recordset;
+    } catch (error) {
+      console.error("Error fetching user:", err);
+      throw err;
+    }
+  }
+
+  /*----------------------------Decline (DELETE) New Employees Accounts By the Manger----------------------------------*/
+  static async DeclineAccounts(user_id) {
+    try {
+      const query = `DELETE FROM users WHERE user_id = @user_id`;
+      const params = {
+        user_id: user_id,
+      };
+      const result = await db.executeQuery(query, params);
+      return result.recordset;
+    } catch (error) {
+      console.error("Error fetching user:", err);
       throw err;
     }
   }

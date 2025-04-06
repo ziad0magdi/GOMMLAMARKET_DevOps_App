@@ -3,12 +3,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
 import "./Application.css";
 import { Plus } from "lucide-react";
+import Modal from "react-modal";
 import TaskCard from "../TaskCard/TskCard";
-// import MyPdfViewer from "../PDFViewer/MyPdfViewer";
 import ApplicationAPI from "../../API/ApplicationAPI";
 import UserAPI from "../../API/UserAPI";
 import TaskAPI from "../../API/TaskAPI";
 import MeetingAPI from "../../API/MeetingAPI";
+import PDFViewer from "../PDFViewer/MyPdfViewer";
 
 const Application = () => {
   const { isDarkMode, language, user_Id, userGroup, userDepartment } =
@@ -21,6 +22,8 @@ const Application = () => {
   const [selectedEmployeeforTask, setSelectedEmployeeforTask] = useState();
   const [selectedDuration, setSelectedDuration] = useState();
   const [selectedDurationUnit, setSelectedDurationUnit] = useState();
+  const [durationforTask, setDurationforTask] = useState();
+  const [durationUnitforTask, setDurationUnitforTask] = useState();
   const [selectedDurationforTask, setSelectedDurationforTask] = useState();
   const [selectedDurationUnitforTask, setSelectedDurationUnitforTask] =
     useState();
@@ -29,6 +32,9 @@ const Application = () => {
   const [workEmployees, setWorkEmployees] = useState([]);
   const navigate = useNavigate();
   const { application_id } = useParams();
+  const [pdfsPath, setPdfsPath] = useState();
+  const [selectedPdf, setSelectedPdf] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     if (!user_Id || !application_id) return;
@@ -40,6 +46,9 @@ const Application = () => {
           Number(user_Id)
         );
         setApplicationData(response.data);
+        setPdfsPath([
+          response.data.applicationInfo[0].Application_Desription_File_Path,
+        ]);
         setTasks(response.data.tasks);
       } catch (error) {
         console.log("Error fetching data:", error);
@@ -100,16 +109,8 @@ const Application = () => {
     window.location.reload();
   };
   const handleAssignUsertoTask = (user_id, task_id, application_id) => {
-    console.log(
-      typeof user_id,
-      user_id,
-      typeof task_id,
-      task_id,
-      typeof application_id,
-      application_id
-    );
     TaskAPI.AssginTask(user_id, task_id, application_id);
-    // window.location.reload();
+    window.location.reload();
   };
   const handleDuration = (duration, duration_unit, application_Id, user_Id) => {
     if (!duration || !duration_unit || !application_Id || !user_Id) {
@@ -183,21 +184,54 @@ const Application = () => {
     window.location.reload();
   };
 
-  console.log("The Employees who work on application >>> ", workEmployees);
-
-  console.log("User ID >>> ", user_Id);
-  console.log("User Group >>> ", userGroup);
-  console.log("User Department >>> ", userDepartment, typeof userDepartment);
-  console.log(
-    "Application Department >>> ",
-    applicationData.applicationInfo[0].Application_department_id,
-    typeof applicationData.applicationInfo[0].Application_department_id
+  const difference = employees.filter(
+    (employee1) =>
+      !workEmployees.some(
+        (employees2) => employee1.user_id === employees2.Employee_Id
+      )
   );
 
-  console.log(
-    "the user who work on this application >>> ",
-    applicationData.applicationInfo[0].The_User_Who_work_on_The_Application_id
-  );
+  const openModal = () => {
+    if (selectedPdf) {
+      setModalOpen(true);
+    }
+  };
+
+  const getDateDifference = (startDate, endDate) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffInMs = end - start;
+    return Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+  };
+
+  const getDateAdding = (duration, duration_unit) => {
+    const start = new Date();
+    if (duration_unit === "week" || duration_unit === "أسبوع") {
+      duration = duration * 7;
+    } else if (duration_unit === "month" || duration_unit === "شهر") {
+      duration = duration * 30;
+    } else if (duration_unit === "year" || duration_unit === "سنة") {
+      duration = duration * 365;
+    }
+    const end = new Date(start.getTime() + duration * 24 * 60 * 60 * 1000);
+    return end.toISOString().slice(0, 10); // returns YYYY-MM-DD
+  };
+  // console.log("PDF Files >>> ", pdfsPath);
+  // console.log("Chosen PDF File >>> ", selectedPdf);
+  // console.log("The Employees who work on application >>> ", workEmployees);
+  // console.log("User ID >>> ", user_Id);
+  // console.log("User Group >>> ", userGroup);
+  // console.log("User Department >>> ", userDepartment, typeof userDepartment);
+  // console.log(
+  //   "Application Department >>> ",
+  //   applicationData.applicationInfo[0].Application_department_id,
+  //   typeof applicationData.applicationInfo[0].Application_department_id
+  // );
+  // console.log(
+  //   "the user who work on this application >>> ",
+  //   applicationData.applicationInfo[0].The_User_Who_work_on_The_Application_id
+  // );
+  console.log(applicationData.meetings);
 
   return (
     <div
@@ -238,7 +272,7 @@ const Application = () => {
                   userDepartment ===
                     applicationData.applicationInfo[0]
                       .Application_department_id ? (
-                    <div>
+                    <div className="select_employee">
                       {applicationData.applicationInfo[0].Application_Duration}
                       <div>
                         <input
@@ -362,42 +396,46 @@ const Application = () => {
                   userDepartment ===
                     applicationData.applicationInfo[0]
                       .Application_department_id ? (
-                    <div>
+                    <div className="select_employee">
                       {
                         applicationData.applicationInfo[0]
                           ?.The_User_Who_Work_on_The_Application
                       }
-                      <select
-                        value={selectedEmployee}
-                        onChange={(e) => {
-                          setSelectedEmployee(e.target.value);
-                        }}
-                      >
-                        <option value="">
-                          {language === "en" ? "Select Employee" : "اختر موظف"}
-                        </option>
-                        {employees.map((employee) => (
-                          <option
-                            key={employee.user_id}
-                            value={employee.user_id}
-                          >
-                            {employee.Employee_Full_Name}
+                      <div>
+                        <select
+                          value={selectedEmployee}
+                          onChange={(e) => {
+                            setSelectedEmployee(e.target.value);
+                          }}
+                        >
+                          <option value="">
+                            {language === "en"
+                              ? "Select Employee"
+                              : "اختر موظف"}
                           </option>
-                        ))}
-                      </select>
-                      <button
-                        onClick={() =>
-                          handleReAssignUser(
-                            applicationData.applicationInfo[0]
-                              .The_User_Who_work_on_The_Application_id,
-                            selectedEmployee,
-                            application_id
-                          )
-                        } // ✅ Use arrow function
-                        disabled={!selectedEmployee}
-                      >
-                        Assign
-                      </button>
+                          {employees.map((employee) => (
+                            <option
+                              key={employee.user_id}
+                              value={employee.user_id}
+                            >
+                              {employee.Employee_Full_Name}
+                            </option>
+                          ))}
+                        </select>
+                        <button
+                          onClick={() =>
+                            handleReAssignUser(
+                              applicationData.applicationInfo[0]
+                                .The_User_Who_work_on_The_Application_id,
+                              selectedEmployee,
+                              application_id
+                            )
+                          }
+                          disabled={!selectedEmployee}
+                        >
+                          Assign
+                        </button>
+                      </div>
                     </div>
                   ) : (
                     applicationData.applicationInfo[0]
@@ -438,7 +476,7 @@ const Application = () => {
                       <button
                         onClick={() =>
                           handleAssignUser(selectedEmployee, application_id)
-                        } // ✅ Use arrow function
+                        }
                         disabled={!selectedEmployee}
                       >
                         Assign
@@ -569,16 +607,30 @@ const Application = () => {
                   )}
               </td>
             </tr>
-            {/* <tr>
-              <MyPdfViewer
-                pdfPath={
-                  applicationData.applicationInfo[0]
-                    ?.Application_Desription_File_Path
-                }
-              />
-            </tr> */}
+            {pdfsPath[0] !== null && (
+              <tr>
+                <select onChange={(e) => setSelectedPdf(e.target.value)}>
+                  <option value="">
+                    {language === "en" ? "Select a PDF" : "أختر الملف"}
+                  </option>
+                  {pdfsPath.map((pdf) => (
+                    <option key={pdf} value={pdf}>
+                      {pdf?.slice(9, pdf.length)}
+                    </option>
+                  ))}
+                </select>
+                <button onClick={openModal} disabled={!selectedPdf}>
+                  {language === "en" ? "View PDF" : "عرض الملف"}
+                </button>
+              </tr>
+            )}
           </tbody>
         </table>
+        <PDFViewer
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          pdfPath={selectedPdf}
+        />
       </div>
       <div className="Application_meetings">
         <h2>{language === "en" ? "Meetings" : "الاجتماعات"}</h2>
@@ -702,7 +754,11 @@ const Application = () => {
                         ? `Meeting ${
                             index + 1
                           } will be offline meeting in meeting room`
-                        : `الاجتماع ${index + 1} سيقام في قاعة الاجتماعات`
+                        : `الاجتماع رقم ${
+                            index + 1
+                          }  سيقام في قاعة الاجتماعات رقم ${
+                            meeting.meeting_location_id ?? ""
+                          }`
                       : ""}
                   </a>
                 </td>
@@ -741,7 +797,11 @@ const Application = () => {
       </div>
       {userDepartment ===
         (applicationData.applicationInfo[0].Application_department_id ||
-          Number(userGroup) === 1) && (
+          (Number(userGroup) !== 2 &&
+            (applicationData.applicationInfo[0].Application_State_id !== 1 ||
+              applicationData.applicationInfo[0].Application_State_id !== 2 ||
+              applicationData.applicationInfo[0].Application_State_id !==
+                4))) && (
         <div>
           <h2>{language === "en" ? "Tasks" : "المهام"}</h2>
           <div className="Application_taskGrid">
@@ -813,7 +873,7 @@ const Application = () => {
                             (_, index) => activeCards[index]
                           )?.Task_Duration ? (
                             userGroup !== "3" ? (
-                              <div>
+                              <div className="select_employee">
                                 {
                                   applicationData.tasksDetails.find(
                                     (_, index) => activeCards[index]
@@ -866,7 +926,15 @@ const Application = () => {
                                     disabled={
                                       !selectedDurationforTask ||
                                       !selectedDurationUnitforTask ||
-                                      selectedDurationforTask <= 0
+                                      selectedDurationforTask <= 0 ||
+                                      getDateDifference(
+                                        applicationData.applicationInfo
+                                          .Application_End_Date,
+                                        getDateAdding(
+                                          selectedDurationforTask,
+                                          selectedDurationUnitforTask
+                                        )
+                                      ) > 0
                                     }
                                   >
                                     {language === "en"
@@ -937,10 +1005,20 @@ const Application = () => {
                                   disabled={
                                     !selectedDurationforTask ||
                                     !selectedDurationUnitforTask ||
-                                    selectedDurationforTask <= 0
+                                    selectedDurationforTask <= 0 ||
+                                    getDateDifference(
+                                      applicationData.applicationInfo
+                                        .Application_End_Date,
+                                      getDateAdding(
+                                        selectedDurationforTask,
+                                        selectedDurationUnitforTask
+                                      )
+                                    ) < 0
                                   }
                                 >
-                                  Assign
+                                  {language === "en"
+                                    ? "Assign Duration"
+                                    : "تعيين المدة"}
                                 </button>
                               </div>
                             )
@@ -980,7 +1058,7 @@ const Application = () => {
                                         ? "Select Employee"
                                         : "اختر موظف"}
                                     </option>
-                                    {employees
+                                    {difference
                                       .filter(
                                         (employee) =>
                                           employee.user_id !==
@@ -1007,7 +1085,7 @@ const Application = () => {
                                         ).task_id,
                                         application_id
                                       )
-                                    } // ✅ Use arrow function
+                                    }
                                     disabled={!selectedEmployeeforTask}
                                   >
                                     Assign

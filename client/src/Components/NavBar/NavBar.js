@@ -23,10 +23,18 @@ const NavBar = () => {
           </li>
         </Link>
 
-        {userGroup != 3 && (
+        {Number(userGroup) != 3 && (
           <Link className="NavBar_link_item" to="/RequestApplication">
             <li className="NavBar_item">
               {language === "en" ? "Request Application" : "طلب تطبيق"}
+            </li>
+          </Link>
+        )}
+
+        {Number(userGroup) != 3 && (
+          <Link className="NavBar_link_item" to="/Empolyees">
+            <li className="NavBar_item">
+              {language === "en" ? "Employees" : "الموظفين"}
             </li>
           </Link>
         )}

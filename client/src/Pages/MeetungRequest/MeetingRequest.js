@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import "./MeetingRequest.css";
 import { useUser } from "../../context/UserContext";
@@ -8,11 +8,23 @@ const MeetingRequest = () => {
   const { isDarkMode, language, user_Id } = useUser();
   console.log("User ID:", user_Id);
   const application_id = location.state?.application_id;
+  const [meetingLocations, setMeetingLocations] = useState([]);
+  const [meetingLocation, setMeetingLocation] = useState("");
   const [meetingLink, setMeetingLink] = useState("");
   const [meetingType, setMeetingType] = useState(false);
   const [meetingStartDate, setMeetingStartDate] = useState("");
   const [meetingImportantPoints, setMeetingImportantPoints] = useState("");
-
+  useEffect(() => {
+    const fetchMeetingLocations = async () => {
+      try {
+        const response = await MeetingAPI.GetMeetingLocation();
+        setMeetingLocations(response.data);
+      } catch (error) {
+        console.error("Error fetching meeting locations:", error);
+      }
+    };
+    fetchMeetingLocations();
+  }, []);
   const toggleMeetingType = () => {
     setMeetingType((prev) => !prev);
   };
@@ -25,6 +37,7 @@ const MeetingRequest = () => {
         meetingType,
         meetingStartDate,
         meetingImportantPoints,
+        Number(meetingLocation),
         meetingLink
       );
       alert("Meeting request submitted successfully!");
@@ -32,7 +45,6 @@ const MeetingRequest = () => {
       console.error("Error submitting Meeting request:", error);
     }
   };
-
   return (
     <div
       className={`MeetingRequest ${
@@ -84,7 +96,34 @@ const MeetingRequest = () => {
           </button>
         </div>
 
-        {/* Online Meeting Link Input */}
+        {!meetingType && (
+          <div className="MeetingRequest_field">
+            <label htmlFor="meetingLocation">
+              {language === "en"
+                ? "Select Meeting Location:"
+                : "اختر مكان الاجتماع:"}
+            </label>
+            <select
+              id="meetingLocation"
+              name="meetingLocation"
+              value={meetingLocation}
+              onChange={(e) => setMeetingLocation(e.target.value)}
+            >
+              <option value="" disabled>
+                {language === "en" ? "Select Location" : "اختر المكان"}
+              </option>
+              {meetingLocations.map((location) => (
+                <option
+                  key={location.meeting_location_id}
+                  value={location.meeting_location_id}
+                >
+                  {location.meeting_location}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
         {meetingType && (
           <div className="MeetingRequest_field">
             <label htmlFor="meetingLink">
@@ -105,7 +144,6 @@ const MeetingRequest = () => {
           </div>
         )}
 
-        {/* Submit Button */}
         <button type="submit" className="MeetingRequest_submit">
           {language === "en" ? "Submit Request" : "إرسال الطلب"}
         </button>

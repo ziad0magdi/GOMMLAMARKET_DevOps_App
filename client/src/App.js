@@ -1,12 +1,11 @@
 import "./App.css";
-import { React, useState } from "react";
+import { React } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
 } from "react-router-dom";
-// import axios from "./API/axios";
 import { UserProvider, useUser } from "./context/UserContext.js";
 import Header from "./Components/Header/Header";
 import NavBar from "./Components/NavBar/NavBar";
@@ -18,19 +17,7 @@ import MyApplication from "./Pages/MyApplication/MyApplication.js";
 import RequestApplication from "./Pages/RequestApplication/RequestAppliction.js";
 import MeetingRequest from "./Pages/MeetungRequest/MeetingRequest.js";
 import RequestTask from "./Pages/RequestTask/RequestTask.js";
-
-// document.addEventListener("contextmenu", (event) => event.preventDefault());
-
-// document.addEventListener("keydown", (event) => {
-//   if (
-//     event.key === "F12" ||
-//     (event.ctrlKey && event.shiftKey && event.key === "I") ||
-//     (event.ctrlKey && event.key === "U")
-//   ) {
-//     event.preventDefault();
-//   }
-// });
-
+import ApproveAccounts from "./Pages/ApproveAccounts/ApproveAccounts.js";
 function App() {
   return (
     <UserProvider>
@@ -69,6 +56,10 @@ function App() {
             path="/Application/:application_id"
             element={<ProtectedRoute Component={Application} />}
           />
+          <Route
+            path="/Empolyees"
+            element={<ProtectedRoute Component={ApproveAccounts} />}
+          />
         </Routes>
         <Footer />
       </Router>
@@ -76,7 +67,7 @@ function App() {
   );
 }
 const ProtectedRoute = ({ Component }) => {
-  const { isLogin } = useUser(); // Get login status from UserContext
+  const { isLogin } = useUser();
   return isLogin ? <Component /> : <Navigate to="/" replace />;
 };
 export default App;

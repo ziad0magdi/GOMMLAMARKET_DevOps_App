@@ -10,7 +10,7 @@ import CryptoJS from "crypto-js";
 const MyApplication = () => {
   const { isDarkMode, language, SECRET_KEY, userGroup, user_Id } = useUser();
   const [selectedOption, setSelectedOption] = useState("requested");
-  const [allApplications, setAllApplications] = useState([]);
+  // const [allApplications, setAllApplications] = useState([]);
   const [requestedApps, setRequestedApps] = useState([]);
   const [canceledApps, setCanceledApps] = useState([]);
   const [approvedApps, setApprovedApps] = useState([]);
@@ -23,7 +23,7 @@ const MyApplication = () => {
       try {
         if (!user_Id) return;
         const response = await ApplicationAPI.getAllUserApplications(user_Id);
-        setAllApplications(response.data.applications);
+        // setAllApplications(response.data.applications);
         setRequestedApps(
           response.data.applications.filter(
             (app) => app.application_status_id === 1
@@ -59,12 +59,12 @@ const MyApplication = () => {
       }
     };
     fetchData();
-  }, [user_Id]); // Add user_Id as dependency to trigger fetch when it changes
+  }, [user_Id]);
   const handleOptionClick = (option) => {
     setSelectedOption(option);
   };
   console.log(user_Id, "from My App ");
-  console.log(allApplications);
+  // console.log(allApplications);
 
   const renderBooks = (apps, sectionTitleEn, sectionTitleAr) => {
     return (

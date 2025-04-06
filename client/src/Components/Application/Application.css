@@ -132,3 +132,8 @@
   display: flex;
   justify-content: space-between;
 }
+
+.select_employee {
+  display: flex;
+  justify-content: space-between;
+}

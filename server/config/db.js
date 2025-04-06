@@ -27,7 +27,6 @@ async function getPool() {
   if (!pool) {
     try {
       pool = await sql.connect(config);
-      console.log(`Database connection pool initialized on ${host}`);
     } catch (err) {
       console.error("Error initializing database pool:", err);
       throw err;
@@ -40,7 +39,6 @@ async function executeQuery(query, params = {}) {
   const pool = await getPool();
   try {
     const request = pool.request();
-    // Adding parameters to the query
     Object.keys(params).forEach((key) => {
       request.input(key, params[key]);
     });

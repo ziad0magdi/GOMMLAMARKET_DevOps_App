@@ -1,6 +1,7 @@
 ﻿SELECT * FROM departments
 SELECT * FROM users
 SELECT * FROM applications
+SELECT * FROM applications_files
 SELECT * FROM users_applications
 SELECT * FROM tasks
 SELECT * FROM users_groups
@@ -8,9 +9,11 @@ SELECT * FROM applications_files
 delete from users_applications where application_id = 34
 SELECT * FROM tasks WHERE application_id = 35
 SELECT * FROM meetings
+DELETE FROM meetings
 SELECT * FROM users_meeting_attend
 DELETE FROM tasks
-
+DELETE FROM users_applications WHERE application_id = 43
+TRUNCATE TABLE tasks
 --------------------------------Get All task Informations-------------------------------------------------------------- 
 SELECT 
 T.task_id,
@@ -300,18 +303,29 @@ UMA.user_id,
 FORMAT(M.meeting_start_date , 'yyyy-MM-dd') AS 'Meeting_Start_Date',
 ATMS.apps_tasks_meetings_status_name AS 'Meeting_Status',
 M.meeting_important_points,
+OFFM.meeting_location_id,
+OFFM.meeting_location,
 UR.user_fname + ' ' + UR.user_lname AS 'User_Who_Request_Meeting',
 UMA.is_approve
 FROM meetings AS M 
 LEFT JOIN users_online_meeting AS UOM
 ON UOM.meeting_id = M.meeting_id
+LEFT JOIN 
+(SELECT 
+UFM.meeting_id,
+UFM.meeting_location_id,
+ML.meeting_location 
+FROM users_offline_meeting AS UFM 
+INNER JOIN meeting_location AS ML
+ON ML.meeting_location_id = UFM.meeting_location_id) AS OFFM
+ON OFFM.meeting_id = M.meeting_id
 INNER JOIN apps_tasks_meetings_status AS ATMS
 ON ATMS.apps_tasks_meetings_status_id = M.meeting_status_id
 INNER JOIN users AS UR 
 ON UR.user_id = M.meeting_request_user_id
 LEFT JOIN users_meeting_attend AS UMA
 ON M.meeting_id = UMA.meeting_id
-WHERE M.application_id = 23 AND 
+WHERE M.application_id = 43 AND 
 (UMA.user_id = 1 OR is_approve IS NULL 
 OR (is_approve IS NOT NULL AND UMA.user_id <> 1 AND M.meeting_id NOT IN (SELECT meeting_id FROM users_meeting_attend WHERE user_id = 1)))
 
@@ -320,6 +334,33 @@ SELECT * FROM users
 SELECT * FROM meetings 
 SELECT * FROM users_meeting_attend
 SELECT * FROM users_online_meeting
+SELECT
+M.meeting_id,
+M.application_id,
+M.meeting_type,
+UOM.meeting_link,
+UMA.user_id,
+FORMAT(M.meeting_start_date , 'yyyy-MM-dd') AS 'Meeting_Start_Date',
+ATMS.apps_tasks_meetings_status_name AS 'Meeting_Status',
+M.meeting_important_points,
+UFM.meeting_location_id,
+UR.user_fname + ' ' + UR.user_lname AS 'User_Who_Request_Meeting',
+UMA.is_approve
+FROM meetings AS M 
+LEFT JOIN users_online_meeting AS UOM
+ON UOM.meeting_id = M.meeting_id
+LEFT JOIN users_offline_meeting AS UFM
+ON UFM.meeting_id = M.meeting_id
+INNER JOIN apps_tasks_meetings_status AS ATMS
+ON ATMS.apps_tasks_meetings_status_id = M.meeting_status_id
+INNER JOIN users AS UR 
+ON UR.user_id = M.meeting_request_user_id
+LEFT JOIN users_meeting_attend AS UMA
+ON M.meeting_id = UMA.meeting_id
+WHERE M.application_id = 43 AND 
+(UMA.user_id = 1 OR is_approve IS NULL 
+OR (is_approve IS NOT NULL AND UMA.user_id <> 1 AND M.meeting_id NOT IN (SELECT meeting_id FROM users_meeting_attend WHERE user_id = 1)))
+
 
 SELECT
 M.application_id,
@@ -331,16 +372,40 @@ UMA.is_approve,
 FORMAT(M.meeting_start_date , 'yyyy-MM-dd') AS 'Meeting_Start_Date',
 ATMS.apps_tasks_meetings_status_name AS 'Meeting_Status',
 M.meeting_important_points,
-UR.user_fname + ' ' + UR.user_lname AS 'User_Who_Request_Meeting'
+UR.user_fname + ' ' + UR.user_lname AS 'User_Who_Request_Meeting',
+ML.meeting_location
 FROM meetings AS M 
 LEFT JOIN users_online_meeting AS UOM
 ON UOM.meeting_id = M.meeting_id
+LEFT JOIN users_offline_meeting AS UFM
+ON UFM.meeting_id = M.meeting_id
+INNER JOIN meeting_location AS ML
+ON ML.meeting_location_id = UFM.meeting_location_id
 INNER JOIN apps_tasks_meetings_status AS ATMS
 ON ATMS.apps_tasks_meetings_status_id = M.meeting_status_id
 INNER JOIN users AS UR 
 ON UR.user_id = M.meeting_request_user_id
 LEFT JOIN users_meeting_attend AS UMA
 ON M.meeting_id = UMA.meeting_id
-WHERE M.application_id = 23 
+WHERE M.application_id = 43
 
 SELECT * FROM meetings WHERE application_id = 23
+
+
+------------------------------Get All Employees with a user-------------------------
+SELECT 
+      U.user_id,
+      U.user_fname + ' ' + user_lname AS 'Employee_Full_Name',
+      U.user_phone,
+      U.isApproved,
+	  UG.group_role
+FROM users AS U
+INNER JOIN users_groups AS UG
+ON U.user_group_id = UG.group_id
+WHERE (user_department_id = (SELECT user_department_id FROM users WHERE user_id = 1)
+ AND user_branch_id = (SELECT user_branch_id FROM users WHERE user_id = 1))
+  AND user_id <> 1
+
+------------------------------Get Offline Meetings Locations------------------------------
+SELECT * FROM meeting_location
+SELECT * FROM users_offline_meeting

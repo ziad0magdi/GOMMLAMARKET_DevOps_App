@@ -8,6 +8,7 @@ class MeetingsController {
       meeting_type,
       meeting_start_date,
       meeting_important_points,
+      meetingLocation,
       meetingLink,
     } = req.body;
     try {
@@ -27,6 +28,14 @@ class MeetingsController {
           meeting_id,
           meetingLink
         );
+      } else {
+        const lastMeetingId = await MeetingsModel.GetLastMeeting_Id();
+        const meeting_id = lastMeetingId[0].meeting_id ?? 1;
+
+        const resulte = await MeetingsModel.addOfflineMeeting(
+          meeting_id,
+          meetingLocation
+        );
       }
 
       return res.json({ success: true });
@@ -35,6 +44,17 @@ class MeetingsController {
       return res.status(500).json({ message: "Server Error", error });
     }
   }
+
+  static async getMeetingLocation(req, res) {
+    try {
+      const resulte = await MeetingsModel.getMeetingLocation();
+      return res.json(resulte);
+    } catch (error) {
+      console.error("Error Fetching Meeting Locations:", error);
+      return res.status(500).json({ message: "Server Error", error });
+    }
+  }
+
   static async approveMeeting(req, res) {
     const meeting_id = req.body.meeting_id;
     const user_id = Number(req.body.user_id);
